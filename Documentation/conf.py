@@ -375,9 +375,10 @@ if cjk_cmd.find("Noto Sans CJK SC") >= 0:
 if major == 1 and minor > 3:
     latex_elements['preamble']  += '\\renewcommand*{\\DUrole}[2]{ #2 }\n'
 
+# Set page margins
 if major == 1 and minor <= 4:
     latex_elements['preamble']  += '\\usepackage[margin=0.5in, top=1in, bottom=1in]{geometry}'
-elif major == 1 and (minor > 5 or (minor == 5 and patch >= 3)):
+elif (major == 1 and (minor > 5 or (minor == 5 and patch >= 3))) or (major > 1):
     latex_elements['sphinxsetup'] = 'hmargin=0.5in, vmargin=1in'
     latex_elements['preamble']  += '\\fvset{fontsize=auto}\n'
 
