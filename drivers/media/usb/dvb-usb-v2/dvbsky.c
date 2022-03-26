@@ -46,7 +46,7 @@ static int dvbsky_usb_generic_rw(struct dvb_usb_device *d,
 	if (wlen != 0)
 		memcpy(state->obuf, wbuf, wlen);
 
-	ret = dvb_usbv2_generic_rw_locked(d, state->obuf, wlen,
+	ret = dvb_usbv2_mediatree_generic_rw_locked(d, state->obuf, wlen,
 			state->ibuf, rlen);
 
 	if (!ret && (rlen != 0))
@@ -813,11 +813,11 @@ MODULE_DEVICE_TABLE(usb, dvbsky_id_table);
 static struct usb_driver dvbsky_usb_driver = {
 	.name = KBUILD_MODNAME,
 	.id_table = dvbsky_id_table,
-	.probe = dvb_usbv2_probe,
-	.disconnect = dvb_usbv2_disconnect,
-	.suspend = dvb_usbv2_suspend,
-	.resume = dvb_usbv2_resume,
-	.reset_resume = dvb_usbv2_reset_resume,
+	.probe = dvb_usbv2_mediatree_probe,
+	.disconnect = dvb_usbv2_mediatree_disconnect,
+	.suspend = dvb_usbv2_mediatree_suspend,
+	.resume = dvb_usbv2_mediatree_resume,
+	.reset_resume = dvb_usbv2_mediatree_reset_resume,
 	.no_dynamic_id = 1,
 	.soft_unbind = 1,
 };

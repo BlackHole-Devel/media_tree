@@ -9,8 +9,8 @@
 #include "dvb_usb_common.h"
 #include <media/media-device.h>
 
-static int dvb_usbv2_disable_rc_polling;
-module_param_named(disable_rc_polling, dvb_usbv2_disable_rc_polling, int, 0644);
+static int dvb_usbv2_mediatree_disable_rc_polling;
+module_param_named(disable_rc_polling, dvb_usbv2_mediatree_disable_rc_polling, int, 0644);
 MODULE_PARM_DESC(disable_rc_polling,
 		"disable remote control polling (default: 0)");
 static int dvb_usb_force_pid_filter_usage;
@@ -19,7 +19,7 @@ module_param_named(force_pid_filter_usage, dvb_usb_force_pid_filter_usage,
 MODULE_PARM_DESC(force_pid_filter_usage,
 		"force all DVB USB devices to use a PID filter, if any (default: 0)");
 
-static int dvb_usbv2_download_firmware(struct dvb_usb_device *d,
+static int dvb_usbv2_mediatree_download_firmware(struct dvb_usb_device *d,
 		const char *name)
 {
 	int ret;
@@ -53,7 +53,7 @@ err:
 	return ret;
 }
 
-static int dvb_usbv2_i2c_init(struct dvb_usb_device *d)
+static int dvb_usbv2_mediatree_i2c_init(struct dvb_usb_device *d)
 {
 	int ret;
 	dev_dbg(&d->udev->dev, "%s:\n", __func__);
@@ -78,7 +78,7 @@ err:
 	return ret;
 }
 
-static int dvb_usbv2_i2c_exit(struct dvb_usb_device *d)
+static int dvb_usbv2_mediatree_i2c_exit(struct dvb_usb_device *d)
 {
 	dev_dbg(&d->udev->dev, "%s:\n", __func__);
 
@@ -99,7 +99,7 @@ static void dvb_usb_read_remote_control(struct work_struct *work)
 	 * When the parameter has been set to 1 via sysfs while the
 	 * driver was running, or when bulk mode is enabled after IR init.
 	 */
-	if (dvb_usbv2_disable_rc_polling || d->rc.bulk_mode) {
+	if (dvb_usbv2_mediatree_disable_rc_polling || d->rc.bulk_mode) {
 		d->rc_polling_active = false;
 		return;
 	}
@@ -116,13 +116,13 @@ static void dvb_usb_read_remote_control(struct work_struct *work)
 			msecs_to_jiffies(d->rc.interval));
 }
 
-static int dvb_usbv2_remote_init(struct dvb_usb_device *d)
+static int dvb_usbv2_mediatree_remote_init(struct dvb_usb_device *d)
 {
 	int ret;
 	struct rc_dev *dev;
 	dev_dbg(&d->udev->dev, "%s:\n", __func__);
 
-	if (dvb_usbv2_disable_rc_polling || !d->props->get_rc_config)
+	if (dvb_usbv2_mediatree_disable_rc_polling || !d->props->get_rc_config)
 		return 0;
 
 	d->rc.map_name = d->rc_map;
@@ -180,7 +180,7 @@ err:
 	return ret;
 }
 
-static int dvb_usbv2_remote_exit(struct dvb_usb_device *d)
+static int dvb_usbv2_mediatree_remote_exit(struct dvb_usb_device *d)
 {
 	dev_dbg(&d->udev->dev, "%s:\n", __func__);
 
@@ -193,8 +193,8 @@ static int dvb_usbv2_remote_exit(struct dvb_usb_device *d)
 	return 0;
 }
 #else
-	#define dvb_usbv2_remote_init(args...) 0
-	#define dvb_usbv2_remote_exit(args...)
+	#define dvb_usbv2_mediatree_remote_init(args...) 0
+	#define dvb_usbv2_mediatree_remote_exit(args...)
 #endif
 
 static void dvb_usb_data_complete(struct usb_data_stream *stream, u8 *buf,
@@ -218,7 +218,7 @@ static void dvb_usb_data_complete_raw(struct usb_data_stream *stream, u8 *buf,
 	dvb_dmx_swfilter_raw(&adap->demux, buf, len);
 }
 
-static int dvb_usbv2_adapter_stream_init(struct dvb_usb_adapter *adap)
+static int dvb_usbv2_mediatree_adapter_stream_init(struct dvb_usb_adapter *adap)
 {
 	dev_dbg(&adap_to_d(adap)->udev->dev, "%s: adap=%d\n", __func__,
 			adap->id);
@@ -230,7 +230,7 @@ static int dvb_usbv2_adapter_stream_init(struct dvb_usb_adapter *adap)
 	return usb_urb_initv2(&adap->stream, &adap->props->stream);
 }
 
-static int dvb_usbv2_adapter_stream_exit(struct dvb_usb_adapter *adap)
+static int dvb_usbv2_mediatree_adapter_stream_exit(struct dvb_usb_adapter *adap)
 {
 	dev_dbg(&adap_to_d(adap)->udev->dev, "%s: adap=%d\n", __func__,
 			adap->id);
@@ -429,7 +429,7 @@ static void dvb_usbv2_media_device_unregister(struct dvb_usb_adapter *adap)
 #endif
 }
 
-static int dvb_usbv2_adapter_dvb_init(struct dvb_usb_adapter *adap)
+static int dvb_usbv2_mediatree_adapter_dvb_init(struct dvb_usb_adapter *adap)
 {
 	int ret;
 	struct dvb_usb_device *d = adap_to_d(adap);
@@ -509,7 +509,7 @@ err_dvb_register_adapter:
 	return ret;
 }
 
-static int dvb_usbv2_adapter_dvb_exit(struct dvb_usb_adapter *adap)
+static int dvb_usbv2_mediatree_adapter_dvb_exit(struct dvb_usb_adapter *adap)
 {
 	dev_dbg(&adap_to_d(adap)->udev->dev, "%s: adap=%d\n", __func__,
 			adap->id);
@@ -525,7 +525,7 @@ static int dvb_usbv2_adapter_dvb_exit(struct dvb_usb_adapter *adap)
 	return 0;
 }
 
-static int dvb_usbv2_device_power_ctrl(struct dvb_usb_device *d, int onoff)
+static int dvb_usbv2_mediatree_device_power_ctrl(struct dvb_usb_device *d, int onoff)
 {
 	int ret;
 
@@ -563,7 +563,7 @@ static int dvb_usb_fe_init(struct dvb_frontend *fe)
 		set_bit(ADAP_INIT, &adap->state_bits);
 	}
 
-	ret = dvb_usbv2_device_power_ctrl(d, 1);
+	ret = dvb_usbv2_mediatree_device_power_ctrl(d, 1);
 	if (ret < 0)
 		goto err;
 
@@ -615,7 +615,7 @@ static int dvb_usb_fe_sleep(struct dvb_frontend *fe)
 			goto err;
 	}
 
-	ret = dvb_usbv2_device_power_ctrl(d, 0);
+	ret = dvb_usbv2_mediatree_device_power_ctrl(d, 0);
 
 err:
 	if (!adap->suspend_resume_active) {
@@ -629,7 +629,7 @@ err:
 	return ret;
 }
 
-static int dvb_usbv2_adapter_frontend_init(struct dvb_usb_adapter *adap)
+static int dvb_usbv2_mediatree_adapter_frontend_init(struct dvb_usb_adapter *adap)
 {
 	int ret, i, count_registered = 0;
 	struct dvb_usb_device *d = adap_to_d(adap);
@@ -706,7 +706,7 @@ err:
 	return ret;
 }
 
-static int dvb_usbv2_adapter_frontend_exit(struct dvb_usb_adapter *adap)
+static int dvb_usbv2_mediatree_adapter_frontend_exit(struct dvb_usb_adapter *adap)
 {
 	int ret, i;
 	struct dvb_usb_device *d = adap_to_d(adap);
@@ -740,7 +740,7 @@ static int dvb_usbv2_adapter_frontend_exit(struct dvb_usb_adapter *adap)
 	return 0;
 }
 
-static int dvb_usbv2_adapter_init(struct dvb_usb_device *d)
+static int dvb_usbv2_mediatree_adapter_init(struct dvb_usb_device *d)
 {
 	struct dvb_usb_adapter *adap;
 	int ret, i, adapter_count;
@@ -794,15 +794,15 @@ static int dvb_usbv2_adapter_init(struct dvb_usb_device *d)
 			adap->max_feed_count = adap->props->pid_filter_count;
 		}
 
-		ret = dvb_usbv2_adapter_stream_init(adap);
+		ret = dvb_usbv2_mediatree_adapter_stream_init(adap);
 		if (ret)
 			goto err;
 
-		ret = dvb_usbv2_adapter_dvb_init(adap);
+		ret = dvb_usbv2_mediatree_adapter_dvb_init(adap);
 		if (ret)
 			goto err;
 
-		ret = dvb_usbv2_adapter_frontend_init(adap);
+		ret = dvb_usbv2_mediatree_adapter_frontend_init(adap);
 		if (ret)
 			goto err;
 
@@ -824,9 +824,9 @@ static int dvb_usbv2_adapter_exit(struct dvb_usb_device *d)
 
 	for (i = MAX_NO_OF_ADAPTER_PER_DEVICE - 1; i >= 0; i--) {
 		if (d->adapter[i].props) {
-			dvb_usbv2_adapter_dvb_exit(&d->adapter[i]);
-			dvb_usbv2_adapter_stream_exit(&d->adapter[i]);
-			dvb_usbv2_adapter_frontend_exit(&d->adapter[i]);
+			dvb_usbv2_mediatree_adapter_dvb_exit(&d->adapter[i]);
+			dvb_usbv2_mediatree_adapter_stream_exit(&d->adapter[i]);
+			dvb_usbv2_mediatree_adapter_frontend_exit(&d->adapter[i]);
 			dvb_usbv2_media_device_unregister(&d->adapter[i]);
 		}
 	}
@@ -835,23 +835,23 @@ static int dvb_usbv2_adapter_exit(struct dvb_usb_device *d)
 }
 
 /* general initialization functions */
-static int dvb_usbv2_exit(struct dvb_usb_device *d)
+static int dvb_usbv2_mediatree_exit(struct dvb_usb_device *d)
 {
 	dev_dbg(&d->udev->dev, "%s:\n", __func__);
 
-	dvb_usbv2_remote_exit(d);
-	dvb_usbv2_adapter_exit(d);
-	dvb_usbv2_i2c_exit(d);
+	dvb_usbv2_mediatree_remote_exit(d);
+	dvb_usbv2_mediatree_adapter_exit(d);
+	dvb_usbv2_mediatree_i2c_exit(d);
 
 	return 0;
 }
 
-static int dvb_usbv2_init(struct dvb_usb_device *d)
+static int dvb_usbv2_mediatree_init(struct dvb_usb_device *d)
 {
 	int ret;
 	dev_dbg(&d->udev->dev, "%s:\n", __func__);
 
-	dvb_usbv2_device_power_ctrl(d, 1);
+	dvb_usbv2_mediatree_device_power_ctrl(d, 1);
 
 	if (d->props->read_config) {
 		ret = d->props->read_config(d);
@@ -859,11 +859,11 @@ static int dvb_usbv2_init(struct dvb_usb_device *d)
 			goto err;
 	}
 
-	ret = dvb_usbv2_i2c_init(d);
+	ret = dvb_usbv2_mediatree_i2c_init(d);
 	if (ret < 0)
 		goto err;
 
-	ret = dvb_usbv2_adapter_init(d);
+	ret = dvb_usbv2_mediatree_adapter_init(d);
 	if (ret < 0)
 		goto err;
 
@@ -873,20 +873,20 @@ static int dvb_usbv2_init(struct dvb_usb_device *d)
 			goto err;
 	}
 
-	ret = dvb_usbv2_remote_init(d);
+	ret = dvb_usbv2_mediatree_remote_init(d);
 	if (ret < 0)
 		goto err;
 
-	dvb_usbv2_device_power_ctrl(d, 0);
+	dvb_usbv2_mediatree_device_power_ctrl(d, 0);
 
 	return 0;
 err:
-	dvb_usbv2_device_power_ctrl(d, 0);
+	dvb_usbv2_mediatree_device_power_ctrl(d, 0);
 	dev_dbg(&d->udev->dev, "%s: failed=%d\n", __func__, ret);
 	return ret;
 }
 
-int dvb_usbv2_probe(struct usb_interface *intf,
+int dvb_usbv2_mediatree_probe(struct usb_interface *intf,
 		const struct usb_device_id *id)
 {
 	int ret;
@@ -953,7 +953,7 @@ int dvb_usbv2_probe(struct usb_interface *intf,
 			if (!name)
 				name = d->props->firmware;
 
-			ret = dvb_usbv2_download_firmware(d, name);
+			ret = dvb_usbv2_mediatree_download_firmware(d, name);
 			if (ret == 0) {
 				/* device is warm, continue initialization */
 				;
@@ -978,7 +978,7 @@ int dvb_usbv2_probe(struct usb_interface *intf,
 	dev_info(&d->udev->dev, "%s: found a '%s' in warm state\n",
 			KBUILD_MODNAME, d->name);
 
-	ret = dvb_usbv2_init(d);
+	ret = dvb_usbv2_mediatree_init(d);
 	if (ret < 0)
 		goto err_free_all;
 
@@ -990,7 +990,7 @@ exit:
 
 	return 0;
 err_free_all:
-	dvb_usbv2_exit(d);
+	dvb_usbv2_mediatree_exit(d);
 	if (d->props->disconnect)
 		d->props->disconnect(d);
 err_kfree_priv:
@@ -1001,9 +1001,9 @@ err:
 	dev_dbg(&udev->dev, "%s: failed=%d\n", __func__, ret);
 	return ret;
 }
-EXPORT_SYMBOL(dvb_usbv2_probe);
+EXPORT_SYMBOL(dvb_usbv2_mediatree_probe);
 
-void dvb_usbv2_disconnect(struct usb_interface *intf)
+void dvb_usbv2_mediatree_disconnect(struct usb_interface *intf)
 {
 	struct dvb_usb_device *d = usb_get_intfdata(intf);
 	const char *devname = kstrdup(dev_name(&d->udev->dev), GFP_KERNEL);
@@ -1015,7 +1015,7 @@ void dvb_usbv2_disconnect(struct usb_interface *intf)
 	if (d->props->exit)
 		d->props->exit(d);
 
-	dvb_usbv2_exit(d);
+	dvb_usbv2_mediatree_exit(d);
 
 	if (d->props->disconnect)
 		d->props->disconnect(d);
@@ -1027,9 +1027,9 @@ void dvb_usbv2_disconnect(struct usb_interface *intf)
 		KBUILD_MODNAME, drvname, devname);
 	kfree(devname);
 }
-EXPORT_SYMBOL(dvb_usbv2_disconnect);
+EXPORT_SYMBOL(dvb_usbv2_mediatree_disconnect);
 
-int dvb_usbv2_suspend(struct usb_interface *intf, pm_message_t msg)
+int dvb_usbv2_mediatree_suspend(struct usb_interface *intf, pm_message_t msg)
 {
 	struct dvb_usb_device *d = usb_get_intfdata(intf);
 	int ret = 0, i, active_fe;
@@ -1058,9 +1058,9 @@ int dvb_usbv2_suspend(struct usb_interface *intf, pm_message_t msg)
 
 	return ret;
 }
-EXPORT_SYMBOL(dvb_usbv2_suspend);
+EXPORT_SYMBOL(dvb_usbv2_mediatree_suspend);
 
-static int dvb_usbv2_resume_common(struct dvb_usb_device *d)
+static int dvb_usbv2_mediatree_resume_common(struct dvb_usb_device *d)
 {
 	int ret = 0, i, active_fe;
 	struct dvb_frontend *fe;
@@ -1091,33 +1091,33 @@ static int dvb_usbv2_resume_common(struct dvb_usb_device *d)
 	return ret;
 }
 
-int dvb_usbv2_resume(struct usb_interface *intf)
+int dvb_usbv2_mediatree_resume(struct usb_interface *intf)
 {
 	struct dvb_usb_device *d = usb_get_intfdata(intf);
 	dev_dbg(&d->udev->dev, "%s:\n", __func__);
 
-	return dvb_usbv2_resume_common(d);
+	return dvb_usbv2_mediatree_resume_common(d);
 }
-EXPORT_SYMBOL(dvb_usbv2_resume);
+EXPORT_SYMBOL(dvb_usbv2_mediatree_resume);
 
-int dvb_usbv2_reset_resume(struct usb_interface *intf)
+int dvb_usbv2_mediatree_reset_resume(struct usb_interface *intf)
 {
 	struct dvb_usb_device *d = usb_get_intfdata(intf);
 	int ret;
 	dev_dbg(&d->udev->dev, "%s:\n", __func__);
 
-	dvb_usbv2_device_power_ctrl(d, 1);
+	dvb_usbv2_mediatree_device_power_ctrl(d, 1);
 
 	if (d->props->init)
 		d->props->init(d);
 
-	ret = dvb_usbv2_resume_common(d);
+	ret = dvb_usbv2_mediatree_resume_common(d);
 
-	dvb_usbv2_device_power_ctrl(d, 0);
+	dvb_usbv2_mediatree_device_power_ctrl(d, 0);
 
 	return ret;
 }
-EXPORT_SYMBOL(dvb_usbv2_reset_resume);
+EXPORT_SYMBOL(dvb_usbv2_mediatree_reset_resume);
 
 MODULE_VERSION("2.0");
 MODULE_AUTHOR("Patrick Boettcher <patrick.boettcher@posteo.de>");

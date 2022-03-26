@@ -8,7 +8,7 @@
 
 #include "dvb_usb_common.h"
 
-static int dvb_usb_v2_generic_io(struct dvb_usb_device *d,
+static int dvb_usb_v2_mediatree_generic_io(struct dvb_usb_device *d,
 		u8 *wbuf, u16 wlen, u8 *rbuf, u16 rlen)
 {
 	int ret, actual_length;
@@ -57,40 +57,40 @@ static int dvb_usb_v2_generic_io(struct dvb_usb_device *d,
 	return ret;
 }
 
-int dvb_usbv2_generic_rw(struct dvb_usb_device *d,
+int dvb_usbv2_mediatree_generic_rw(struct dvb_usb_device *d,
 		u8 *wbuf, u16 wlen, u8 *rbuf, u16 rlen)
 {
 	int ret;
 
 	mutex_lock(&d->usb_mutex);
-	ret = dvb_usb_v2_generic_io(d, wbuf, wlen, rbuf, rlen);
+	ret = dvb_usb_v2_mediatree_generic_io(d, wbuf, wlen, rbuf, rlen);
 	mutex_unlock(&d->usb_mutex);
 
 	return ret;
 }
-EXPORT_SYMBOL(dvb_usbv2_generic_rw);
+EXPORT_SYMBOL(dvb_usbv2_mediatree_generic_rw);
 
-int dvb_usbv2_generic_write(struct dvb_usb_device *d, u8 *buf, u16 len)
+int dvb_usbv2_mediatree_generic_write(struct dvb_usb_device *d, u8 *buf, u16 len)
 {
 	int ret;
 
 	mutex_lock(&d->usb_mutex);
-	ret = dvb_usb_v2_generic_io(d, buf, len, NULL, 0);
+	ret = dvb_usb_v2_mediatree_generic_io(d, buf, len, NULL, 0);
 	mutex_unlock(&d->usb_mutex);
 
 	return ret;
 }
-EXPORT_SYMBOL(dvb_usbv2_generic_write);
+EXPORT_SYMBOL(dvb_usbv2_mediatree_generic_write);
 
-int dvb_usbv2_generic_rw_locked(struct dvb_usb_device *d,
+int dvb_usbv2_mediatree_generic_rw_locked(struct dvb_usb_device *d,
 		u8 *wbuf, u16 wlen, u8 *rbuf, u16 rlen)
 {
-	return dvb_usb_v2_generic_io(d, wbuf, wlen, rbuf, rlen);
+	return dvb_usb_v2_mediatree_generic_io(d, wbuf, wlen, rbuf, rlen);
 }
-EXPORT_SYMBOL(dvb_usbv2_generic_rw_locked);
+EXPORT_SYMBOL(dvb_usbv2_mediatree_generic_rw_locked);
 
-int dvb_usbv2_generic_write_locked(struct dvb_usb_device *d, u8 *buf, u16 len)
+int dvb_usbv2_mediatree_generic_write_locked(struct dvb_usb_device *d, u8 *buf, u16 len)
 {
-	return dvb_usb_v2_generic_io(d, buf, len, NULL, 0);
+	return dvb_usb_v2_mediatree_generic_io(d, buf, len, NULL, 0);
 }
-EXPORT_SYMBOL(dvb_usbv2_generic_write_locked);
+EXPORT_SYMBOL(dvb_usbv2_mediatree_generic_write_locked);

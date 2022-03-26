@@ -399,19 +399,19 @@ struct dvb_usb_device {
 	void *priv;
 };
 
-extern int dvb_usbv2_probe(struct usb_interface *,
+extern int dvb_usbv2_mediatree_probe(struct usb_interface *,
 		const struct usb_device_id *);
-extern void dvb_usbv2_disconnect(struct usb_interface *);
-extern int dvb_usbv2_suspend(struct usb_interface *, pm_message_t);
-extern int dvb_usbv2_resume(struct usb_interface *);
-extern int dvb_usbv2_reset_resume(struct usb_interface *);
+extern void dvb_usbv2_mediatree_disconnect(struct usb_interface *);
+extern int dvb_usbv2_mediatree_suspend(struct usb_interface *, pm_message_t);
+extern int dvb_usbv2_mediatree_resume(struct usb_interface *);
+extern int dvb_usbv2_mediatree_reset_resume(struct usb_interface *);
 
 /* the generic read/write method for device control */
-extern int dvb_usbv2_generic_rw(struct dvb_usb_device *, u8 *, u16, u8 *, u16);
-extern int dvb_usbv2_generic_write(struct dvb_usb_device *, u8 *, u16);
+extern int dvb_usbv2_mediatree_generic_rw(struct dvb_usb_device *, u8 *, u16, u8 *, u16);
+extern int dvb_usbv2_mediatree_generic_write(struct dvb_usb_device *, u8 *, u16);
 /* caller must hold lock when locked versions are called */
-extern int dvb_usbv2_generic_rw_locked(struct dvb_usb_device *,
+extern int dvb_usbv2_mediatree_generic_rw_locked(struct dvb_usb_device *,
 		u8 *, u16, u8 *, u16);
-extern int dvb_usbv2_generic_write_locked(struct dvb_usb_device *, u8 *, u16);
+extern int dvb_usbv2_mediatree_generic_write_locked(struct dvb_usb_device *, u8 *, u16);
 
 #endif
